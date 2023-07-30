@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'com.google.devtools.ksp' version libs.versions.ksp
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
+
+apply from: "${project.rootDir}/base-build.gradle"
+
+android {
+    namespace 'com.arjun.weather_data'
+}
+
+dependencies {
+
+    implementation(project(":core"))
+    implementation(project(":weather:domain"))
+
+    //Retrofit
+    implementation libs.bundles.retrofit
+
+    //okhttp
+    implementation(platform(libs.okhttp.bom))
+    implementation libs.bundles.okhttp
+
+    //Moshi
+    implementation libs.moshi
+    ksp libs.moshi.codegen
+
+    //Room
+    implementation libs.bundles.room
+    ksp libs.room.compiler
+
+}

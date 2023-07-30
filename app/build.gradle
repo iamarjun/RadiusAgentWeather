@@ -55,6 +55,9 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":core-ui"))
+    implementation(project(":weather:data"))
+    implementation(project(":weather:domain"))
+    implementation(project(":weather:presentation"))
 
     implementation libs.bundles.google
 

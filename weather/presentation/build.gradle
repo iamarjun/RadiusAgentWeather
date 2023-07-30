@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'com.google.devtools.ksp' version libs.versions.ksp
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
+
+apply from: "${project.rootDir}/compose-build.gradle"
+
+android {
+    namespace 'com.arjun.weather.presentation'
+}
+
+ksp {
+    arg("compose-destinations.mode", "navgraphs")
+    arg("compose-destinations.moduleName", "weather")
+}
+dependencies {
+
+    implementation(project(":core"))
+    implementation(project(":core-ui"))
+    implementation(project(":weather:domain"))
+
+}
