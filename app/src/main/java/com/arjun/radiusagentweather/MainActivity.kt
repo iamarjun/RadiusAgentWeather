@@ -6,11 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.arjun.core_ui.theme.RadiusAgentWeatherTheme
+import com.arjun.radiusagentweather.navigation.CoreFeatureNavigator
+import com.arjun.radiusagentweather.navigation.RootNavGraph
+import com.arjun.weather.presentation.WeatherNavGraph
+import com.arjun.weather.presentation.destinations.WeatherHomeScreenDestination
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,25 +28,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    val navController = rememberNavController()
+                    val modifier = Modifier
+                    DestinationsNavHost(
+                        navController = navController,
+                        navGraph = RootNavGraph,
+                        startRoute = WeatherNavGraph,
+                        dependenciesContainerBuilder = {
+                            dependency(modifier)
+                            dependency(CoreFeatureNavigator(destination, navController))
+                        }
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    com.arjun.core_ui.theme.RadiusAgentWeatherTheme {
-        Greeting("Android")
     }
 }
