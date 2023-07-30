@@ -1,0 +1,111 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.devtools.ksp' version '1.8.22-1.0.11'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
+
+apply from: "${project.rootDir}/base-build.gradle"
+
+android {
+    namespace = "com.arjun.radiusagentweather"
+    compileSdk Integer.parseInt(libs.versions.compile.sdk.get())
+
+    defaultConfig {
+        applicationId = "com.arjun.radiusagentweather"
+        minSdk Integer.parseInt(libs.versions.min.sdk.get())
+        targetSdk Integer.parseInt(libs.versions.compile.sdk.get())
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility libs.versions.java.compile.version.get()
+        targetCompatibility libs.versions.java.compile.version.get()
+    }
+    kotlinOptions {
+        jvmTarget = libs.versions.java.compile.version.get()
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.ext.get()
+    }
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+        resources.excludes.add("META-INF/gradle/incremental.annotation.processors")
+    }
+}
+
+dependencies {
+
+    implementation(project(":core"))
+//    implementation(project(":core-ui"))
+//    implementation(project(":onboarding:onboarding_presentation"))
+//    implementation(project(":onboarding:onboarding_domain"))
+//    implementation(project(":tracker:tracker_data"))
+//    implementation(project(":tracker:tracker_domain"))
+//    implementation(project(":tracker:tracker_presentation"))
+
+    implementation libs.bundles.google
+
+    //Compose
+    implementation(platform(libs.compose.bom))
+    implementation libs.bundles.compose
+    androidTestImplementation libs.bundles.compose
+
+
+    // Android Studio Preview support
+    debugImplementation libs.compose.ui
+
+    // UI Tests
+    debugImplementation libs.compose.ui.test.manifest
+
+    //Navigation
+    implementation libs.bundles.navigation
+    ksp libs.compose.destination.ksp
+
+
+    //Hilt
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+    kapt libs.hilt.android.compiler
+
+    //Moshi
+    implementation libs.moshi
+    ksp libs.moshi.codegen
+
+    //Retrofit
+    implementation libs.bundles.retrofit
+
+    //okhttp
+    implementation(platform(libs.okhttp.bom))
+    implementation libs.bundles.okhttp
+
+    //Room
+    implementation libs.bundles.room
+    ksp libs.room.compiler
+
+    //Coroutines
+    implementation libs.bundles.coroutines
+
+    //Unit Test
+    testImplementation libs.bundles.unit.test
+
+    //Ui Test
+    androidTestImplementation libs.bundles.ui.test
+}

@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "RadiusAgentWeather"
 include(":app")
+include(":core")
