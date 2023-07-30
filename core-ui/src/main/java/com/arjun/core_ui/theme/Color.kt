@@ -1,4 +1,4 @@
-package com.arjun.radiusagentweather.ui.theme
+package com.arjun.core_ui.theme
 
 import androidx.compose.ui.graphics.Color
 

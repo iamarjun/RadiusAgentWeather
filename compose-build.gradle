@@ -1,28 +1,13 @@
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.devtools.ksp' version libs.versions.ksp
-    id 'dagger.hilt.android.plugin'
-    id 'kotlin-parcelize'
-    id 'kotlin-kapt'
-}
-
-apply from: "${project.rootDir}/base-build.gradle"
-
 android {
-    namespace = "com.arjun.radiusagentweather"
     compileSdk Integer.parseInt(libs.versions.compile.sdk.get())
 
     defaultConfig {
-        applicationId = "com.arjun.radiusagentweather"
         minSdk Integer.parseInt(libs.versions.min.sdk.get())
         targetSdk Integer.parseInt(libs.versions.compile.sdk.get())
-        versionCode 1
-        versionName "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
-            useSupportLibrary = true
+            useSupportLibrary true
         }
     }
 
@@ -50,18 +35,17 @@ android {
         resources.excludes.add("META-INF/gradle/incremental.annotation.processors")
     }
 }
-
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
+}
 dependencies {
-
-    implementation(project(":core"))
-//    implementation(project(":core-ui"))
-//    implementation(project(":onboarding:onboarding_presentation"))
-//    implementation(project(":onboarding:onboarding_domain"))
-//    implementation(project(":tracker:tracker_data"))
-//    implementation(project(":tracker:tracker_domain"))
-//    implementation(project(":tracker:tracker_presentation"))
-
-    implementation libs.bundles.google
 
     //Compose
     implementation(platform(libs.compose.bom))
@@ -79,29 +63,10 @@ dependencies {
     implementation libs.bundles.navigation
     ksp libs.compose.destination.ksp
 
-
     //Hilt
     implementation libs.hilt.android
     kapt libs.hilt.compiler
     kapt libs.hilt.android.compiler
-
-    //Moshi
-    implementation libs.moshi
-    ksp libs.moshi.codegen
-
-    //Retrofit
-    implementation libs.bundles.retrofit
-
-    //okhttp
-    implementation(platform(libs.okhttp.bom))
-    implementation libs.bundles.okhttp
-
-    //Room
-    implementation libs.bundles.room
-    ksp libs.room.compiler
-
-    //Coroutines
-    implementation libs.bundles.coroutines
 
     //Unit Test
     testImplementation libs.bundles.unit.test

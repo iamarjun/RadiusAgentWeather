@@ -1,17 +1,17 @@
 plugins {
     id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'com.google.devtools.ksp' version libs.versions.ksp
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
 }
-apply from: "${project.rootDir}/base-build.gradle"
+apply from: "${project.rootDir}/compose-build.gradle"
 
 android {
-    namespace "com.arjun.core"
+    namespace "com.arjun.core_ui"
 }
-
 dependencies {
 
 }

@@ -10,13 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.arjun.radiusagentweather.ui.theme.RadiusAgentWeatherTheme
+import com.arjun.core_ui.theme.RadiusAgentWeatherTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RadiusAgentWeatherTheme {
+            com.arjun.core_ui.theme.RadiusAgentWeatherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -40,7 +40,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    RadiusAgentWeatherTheme {
+    com.arjun.core_ui.theme.RadiusAgentWeatherTheme {
         Greeting("Android")
     }
 }
