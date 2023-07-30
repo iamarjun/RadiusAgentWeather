@@ -9,14 +9,14 @@ interface WeatherApi {
 
     @GET("search.json")
     suspend fun searchLocation(
-        @Query("key") key: String,
+        @Query("key") key: String = "eb462722f37d4e1b8cf82924233007",
         @Query("q") query: String,
     ): List<LocationResult>
 
 
-    @GET("search.json")
+    @GET("current.json")
     suspend fun getCurrentLocationWeatherResult(
-        @Query("key") key: String,
+        @Query("key") key: String = "eb462722f37d4e1b8cf82924233007",
         @Query("q") query: String,
         @Query("aqi") aqi: String = "yes",
     ): CurrentLocationWeatherResult
