@@ -21,7 +21,7 @@ fun UnitText(
     textStyle: TextStyle = MaterialTheme.typography.displayLarge.copy(
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 80.sp
+        fontSize = 70.sp
     )
 ) {
     val spacing = LocalSpacing.current
@@ -36,7 +36,7 @@ fun UnitText(
         Text(
             text = unit,
             modifier = modifier,
-            style = MaterialTheme.typography.displaySmall.copy(
+            style = MaterialTheme.typography.headlineLarge.copy(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
             )
