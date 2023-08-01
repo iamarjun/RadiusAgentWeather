@@ -1,6 +1,9 @@
 package com.arjun.weather.presentation.detail
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,10 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.arjun.core_ui.Dimensions
 import com.arjun.core_ui.LocalSpacing
+import com.arjun.core_ui.theme.RadiusAgentSupportingGray2
+import com.arjun.core_ui.theme.RadiusAgentSupportingGray3
 import com.arjun.weather.presentation.detail.components.UnitText
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +71,10 @@ fun CurrentLocationWeatherDetailScreen(
                 else -> {}
             }
         }
+    }
+
+    BackHandler {
+        navigator.navigateUp()
     }
 
     val spacing = LocalSpacing.current
@@ -91,6 +108,17 @@ fun CurrentLocationWeatherDetailScreen(
             )
         }
     ) {
+
+        if (state.isLoading) {
+            Box(
+                modifier = modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
         if (state.currentLocationWeather != null) {
             LazyColumn(
@@ -137,12 +165,84 @@ fun CurrentLocationWeatherDetailScreen(
                             )
                         }
                     }
+                }
 
+                item {
+                    HourlyForecast(modifier, spacing, state)
                 }
 
             }
-        } else {
-            CircularProgressIndicator()
+        }
+    }
+}
+
+@Composable
+private fun HourlyForecast(
+    modifier: Modifier,
+    spacing: Dimensions,
+    state: CurrentLocationWeatherDetailScreenContract.State
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10)
+    ) {
+        Column(
+            modifier = modifier
+                .background(RadiusAgentSupportingGray3)
+                .fillMaxWidth()
+                .padding(spacing.spaceMedium),
+            verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
+        ) {
+            Text(
+                text = state.currentLocationWeather?.current?.condition?.text ?: "",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Divider(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(RadiusAgentSupportingGray2)
+            )
+
+            LazyRow(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                state.currentLocationWeather
+                    ?.forecast
+                    ?.forecastday
+                    ?.first()
+                    ?.hour
+                    ?.filterNotNull()
+                    ?.let {
+                        items(it) {
+                            Column(
+                                modifier = modifier.padding(spacing.spaceSmall),
+                                verticalArrangement = Arrangement.spacedBy(space = spacing.spaceSmall),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                val formatter =
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                                val hour =
+                                    LocalDateTime.parse(it.time, formatter).hour
+                                Text(
+                                    text = "$hour",
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                                AsyncImage(
+                                    modifier = modifier.size(20.dp),
+                                    model = "https:${it.condition?.icon}",
+                                    contentDescription = "Current Weather Condition"
+                                )
+                                Text(
+                                    text = "${it.tempC}°C",
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
+                    }
+            }
         }
     }
 }

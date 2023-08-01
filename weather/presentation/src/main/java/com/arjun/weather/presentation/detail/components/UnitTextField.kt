@@ -36,9 +36,9 @@ fun UnitText(
         Text(
             text = unit,
             modifier = modifier,
-            style = MaterialTheme.typography.headlineLarge.copy(
+            style = MaterialTheme.typography.headlineSmall.copy(
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
             )
         )
     }

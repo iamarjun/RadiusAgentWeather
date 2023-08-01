@@ -25,7 +25,7 @@ class WeatherRepositoryImp @Inject constructor(
     override suspend fun getWeatherForLocation(slug: String): Result<CurrentLocationWeather> {
         return try {
             val currentLocationWeatherResult =
-                weatherApi.getCurrentLocationWeatherResult(query = slug)
+                weatherApi.getCurrentLocationWeatherForecastResult(query = slug)
             Result.success(currentLocationWeatherResult.toCurrentLocationWeather())
         } catch (e: Throwable) {
             Result.failure(e)

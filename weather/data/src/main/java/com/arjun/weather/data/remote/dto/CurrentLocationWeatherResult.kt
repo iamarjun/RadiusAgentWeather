@@ -12,4 +12,8 @@ data class CurrentLocationWeatherResult(
     val location: LocationResult,
     @Json(name = "current")
     val current: WeatherResult,
+    @Json(name = "alerts")
+    val alerts: AlertsResult?,
+    @Json(name = "forecast")
+    val forecast: ForecastResult?
 ) : Parcelable
