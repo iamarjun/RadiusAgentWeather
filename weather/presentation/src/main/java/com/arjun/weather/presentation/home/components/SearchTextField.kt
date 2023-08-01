@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.arjun.core_ui.LocalSpacing
+import com.arjun.core_ui.theme.RadiusAgentSupportingGray
+import com.arjun.core_ui.theme.RadiusAgentSupportingGray2
 import com.arjun.weather.presentation.R
 
 @Composable
@@ -36,6 +39,7 @@ fun SearchTextField(
     text: String,
     onValueChange: (String) -> Unit,
     onSearch: () -> Unit,
+    onClear: () -> Unit,
     hint: String = stringResource(id = R.string.hint),
     shouldShowHint: Boolean = false,
     onFocusChange: (FocusState) -> Unit,
@@ -44,16 +48,15 @@ fun SearchTextField(
 
     Box(modifier = modifier.fillMaxWidth()) {
         BasicTextField(
+            value = text,
             modifier = modifier
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(50))
                 .padding(spacing.spaceExtraSmall)
-                .shadow(elevation = 2.dp, shape = RoundedCornerShape(25))
-                .background(MaterialTheme.colorScheme.background)
+                .background(RadiusAgentSupportingGray2)
                 .fillMaxWidth()
                 .padding(spacing.spaceMedium)
                 .padding(start = spacing.spaceLarge)
                 .onFocusChanged(onFocusChange),
-            value = text,
             onValueChange = onValueChange,
             singleLine = true,
             keyboardActions = KeyboardActions(
@@ -86,8 +89,22 @@ fun SearchTextField(
             Icon(
                 modifier = modifier,
                 imageVector = Icons.Default.Search,
-                contentDescription = stringResource(id = R.string.hint)
+                contentDescription = "Search",
+                tint = RadiusAgentSupportingGray
             )
+        }
+        if (text.isNotEmpty()) {
+            IconButton(
+                modifier = modifier.align(Alignment.CenterEnd),
+                onClick = onClear
+            ) {
+                Icon(
+                    modifier = modifier,
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Clear Search Result",
+                    tint = RadiusAgentSupportingGray
+                )
+            }
         }
     }
 

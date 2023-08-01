@@ -2,8 +2,10 @@ package com.arjun.weather.data.di
 
 import android.content.Context
 import com.arjun.weather.data.local.db.WeatherDb
+import com.arjun.weather.data.location.DefaultLocationTracker
 import com.arjun.weather.data.remote.api.WeatherApi
 import com.arjun.weather.data.repository.WeatherRepositoryImp
+import com.arjun.weather.domain.location.LocationTracker
 import com.arjun.weather.domain.repository.WeatherRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -26,6 +28,9 @@ abstract class WeatherDataModule {
     @Binds
     abstract fun bindsWeatherRepository(weatherRepositoryImp: WeatherRepositoryImp): WeatherRepository
 
+    @Binds
+    abstract fun bindsLocationTracker(defaultLocationTracker: DefaultLocationTracker): LocationTracker
+
     companion object {
         @Provides
         fun providesHttpInterceptor(): HttpLoggingInterceptor =
@@ -40,7 +45,8 @@ abstract class WeatherDataModule {
                 .build()
 
         @Provides
-        fun providesConverterFactory(moshi: Moshi): Converter.Factory = MoshiConverterFactory.create(moshi)
+        fun providesConverterFactory(moshi: Moshi): Converter.Factory =
+            MoshiConverterFactory.create(moshi)
 
         @Provides
         fun providesMoshi() = Moshi.Builder()

@@ -18,6 +18,12 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":weather:domain"))
 
+    //GSM
+    implementation libs.play.services.location
+
+    //Worker
+    implementation libs.workmanager.runtime
+
     //Retrofit
     implementation libs.bundles.retrofit
 

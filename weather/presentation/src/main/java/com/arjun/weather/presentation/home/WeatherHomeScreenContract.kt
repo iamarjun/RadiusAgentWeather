@@ -4,14 +4,17 @@ import com.arjun.core.state_management.UiEffect
 import com.arjun.core.state_management.UiEvent
 import com.arjun.core.state_management.UiState
 import com.arjun.weather.domain.model.Location
-import java.time.LocalDate
 
 class WeatherHomeScreenContract {
 
     sealed class Event : UiEvent {
         data class OnQueryChange(val query: String) : Event()
         data object OnSearch : Event()
+
+        data object OnClearSearch: Event()
         data class OnSearchFocusChange(val isFocused: Boolean) : Event()
+        data class OnSearchLocationResultClick(val slug: String) : Event()
+        data object OnUseCurrentLocation : Event()
     }
 
     sealed class Effect : UiEffect {
@@ -23,6 +26,7 @@ class WeatherHomeScreenContract {
         val query: String? = null,
         val showHint: Boolean = true,
         val isSearching: Boolean = false,
-        val savedLocations: List<Location> = emptyList()
+        val searchLocationResult: List<Location> = emptyList(),
+        val currentLocation: android.location.Location? = null
     ) : UiState
 }

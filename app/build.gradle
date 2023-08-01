@@ -66,6 +66,8 @@ dependencies {
     implementation libs.bundles.compose
     androidTestImplementation libs.bundles.compose
 
+    //GSM
+    implementation libs.play.services.location
 
     // Android Studio Preview support
     debugImplementation libs.compose.ui

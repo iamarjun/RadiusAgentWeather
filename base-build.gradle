@@ -37,14 +37,17 @@ dependencies {
 
     implementation libs.bundles.google
 
-            //Hilt
-            implementation libs.hilt.android
-            kapt libs.hilt.compiler
-            kapt libs.hilt.android.compiler
+    //Coroutines
+    implementation libs.bundles.coroutines
 
-            //Unit Test
-            testImplementation libs.bundles.unit.test
+    //Hilt
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+    kapt libs.hilt.android.compiler
 
-            //Ui Test
-            androidTestImplementation libs.bundles.ui.test
+    //Unit Test
+    testImplementation libs.bundles.unit.test
+
+    //Ui Test
+    androidTestImplementation libs.bundles.ui.test
 }

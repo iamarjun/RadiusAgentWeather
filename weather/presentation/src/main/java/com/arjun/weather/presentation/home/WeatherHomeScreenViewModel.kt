@@ -2,6 +2,7 @@ package com.arjun.weather.presentation.home
 
 import androidx.lifecycle.viewModelScope
 import com.arjun.core.state_management.BaseViewModel
+import com.arjun.weather.domain.location.LocationTracker
 import com.arjun.weather.domain.usecases.SearchLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -9,7 +10,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherHomeScreenViewModel @Inject constructor(
-    private val searchLocation: SearchLocation
+    private val searchLocation: SearchLocation,
+    private val locationTracker: LocationTracker
 ) : BaseViewModel<WeatherHomeScreenContract.Event, WeatherHomeScreenContract.State, WeatherHomeScreenContract.Effect>() {
     override fun createInitialState(): WeatherHomeScreenContract.State {
         return WeatherHomeScreenContract.State()
@@ -32,6 +34,34 @@ class WeatherHomeScreenViewModel @Inject constructor(
                     )
                 }
             }
+
+            is WeatherHomeScreenContract.Event.OnSearchLocationResultClick -> {
+
+            }
+            WeatherHomeScreenContract.Event.OnUseCurrentLocation -> {
+
+            }
+            WeatherHomeScreenContract.Event.OnClearSearch -> {
+                setState {
+                    copy(
+                        query = null,
+                        searchLocationResult = emptyList(),
+                        isSearching = false
+                    )
+                }
+            }
+        }
+    }
+
+    fun getCurrentLocation() {
+        viewModelScope.launch {
+            val currentLocation = locationTracker.getCurrentLocation()
+            println("Location: $currentLocation")
+            setState {
+                copy(
+                    currentLocation = currentLocation
+                )
+            }
         }
     }
 
@@ -50,7 +80,7 @@ class WeatherHomeScreenViewModel @Inject constructor(
                         setState {
                             copy(
                                 isSearching = false,
-                                savedLocations = it
+                                searchLocationResult = it
                             )
                         }
                     }
