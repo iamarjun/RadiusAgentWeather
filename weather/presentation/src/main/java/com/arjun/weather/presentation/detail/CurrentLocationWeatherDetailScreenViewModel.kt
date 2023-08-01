@@ -17,7 +17,11 @@ class CurrentLocationWeatherDetailScreenViewModel @Inject constructor(
 
     override fun handleEvent(event: CurrentLocationWeatherDetailScreenContract.Event) {
         when (event) {
-            else -> {}
+            CurrentLocationWeatherDetailScreenContract.Event.OnBackPress -> {
+                setEffect {
+                    CurrentLocationWeatherDetailScreenContract.Effect.NavigateUp
+                }
+            }
         }
     }
 

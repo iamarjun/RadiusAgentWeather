@@ -2,6 +2,7 @@ package com.arjun.weather.presentation.detail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,12 @@ fun CurrentLocationWeatherDetailScreen(
     LaunchedEffect(key1 = Unit) {
         viewModel.effect.collectLatest {
             when (it) {
-                else -> {}
+                CurrentLocationWeatherDetailScreenContract.Effect.NavigateUp -> {
+                    navigator.navigateUp()
+                }
+                is CurrentLocationWeatherDetailScreenContract.Effect.ShowToast -> {
+                    snackbarHostState.showSnackbar(it.message)
+                }
             }
         }
     }
@@ -92,6 +98,9 @@ fun CurrentLocationWeatherDetailScreen(
                 title = { },
                 navigationIcon = {
                     Icon(
+                        modifier = modifier.clickable {
+                            viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
+                        },
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back Button"
                     )
@@ -317,7 +326,7 @@ private fun HourlyForecast(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10)
+        shape = RoundedCornerShape(5)
     ) {
         Column(
             modifier = modifier

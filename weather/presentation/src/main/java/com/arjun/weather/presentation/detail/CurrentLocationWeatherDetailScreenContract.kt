@@ -8,7 +8,7 @@ import com.arjun.weather.domain.model.CurrentLocationWeather
 class CurrentLocationWeatherDetailScreenContract {
 
     sealed class Event : UiEvent {
-
+        data object OnBackPress : Event()
     }
 
     sealed class Effect : UiEffect {
