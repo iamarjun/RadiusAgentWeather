@@ -22,10 +22,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arjun.core_ui.LocalSpacing
 import com.arjun.core_ui.theme.RadiusAgentPrimary
 import com.arjun.weather.presentation.R
@@ -51,16 +53,23 @@ import kotlinx.coroutines.flow.collectLatest
 @RootNavGraph(start = true)
 fun WeatherHomeScreen(
     modifier: Modifier,
+    snackbarHostState: SnackbarHostState,
     navigator: WeatherHomeScreenNavigator,
     viewModel: WeatherHomeScreenViewModel = hiltViewModel()
 ) {
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
         modifier.apply {
             padding(it)
         }
-        HomeScreen(modifier = modifier, viewModel = viewModel, navigator = navigator)
+        HomeScreen(
+            modifier = modifier,
+            viewModel = viewModel,
+            navigator = navigator,
+            snackbarHostState = snackbarHostState
+        )
     }
 }
 
@@ -68,23 +77,26 @@ fun WeatherHomeScreen(
 @Composable
 private fun HomeScreen(
     modifier: Modifier,
+    snackbarHostState: SnackbarHostState,
     viewModel: WeatherHomeScreenViewModel,
     navigator: WeatherHomeScreenNavigator
 ) {
 
     val spacing = LocalSpacing.current
-    val context = LocalContext.current
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = keyboardController) {
         viewModel.effect.collectLatest {
-//            when (it) {
-//                WeatherHomeScreenContract.Effect.NavigateUp -> navigator.navigateUp()
-//                is WeatherHomeScreenContract.Effect.ShowToast -> {
-//                    scaffoldState.snackbarHostState.showSnackbar(it.message)
-//                }
-//            }
+            when (it) {
+                is WeatherHomeScreenContract.Effect.NavigateToCurrentLocationWeatherDetailScreen -> navigator.navigateToWeatherDetailScreen(
+                    it.slug
+                )
+
+                is WeatherHomeScreenContract.Effect.ShowToast -> {
+                    snackbarHostState.showSnackbar(it.message)
+                }
+            }
         }
     }
 

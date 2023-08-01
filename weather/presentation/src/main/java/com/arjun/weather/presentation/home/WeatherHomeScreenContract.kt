@@ -19,7 +19,7 @@ class WeatherHomeScreenContract {
 
     sealed class Effect : UiEffect {
         data class ShowToast(val message: String) : Effect()
-        data object NavigateUp : Effect()
+        data class NavigateToCurrentLocationWeatherDetailScreen(val slug: String): Effect()
     }
 
     data class State(

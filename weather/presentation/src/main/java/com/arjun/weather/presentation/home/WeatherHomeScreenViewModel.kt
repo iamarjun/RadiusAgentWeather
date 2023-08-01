@@ -36,11 +36,17 @@ class WeatherHomeScreenViewModel @Inject constructor(
             }
 
             is WeatherHomeScreenContract.Event.OnSearchLocationResultClick -> {
-
+                setEffect {
+                    WeatherHomeScreenContract.Effect.NavigateToCurrentLocationWeatherDetailScreen(
+                        slug = event.slug
+                    )
+                }
             }
+
             WeatherHomeScreenContract.Event.OnUseCurrentLocation -> {
 
             }
+
             WeatherHomeScreenContract.Event.OnClearSearch -> {
                 setState {
                     copy(

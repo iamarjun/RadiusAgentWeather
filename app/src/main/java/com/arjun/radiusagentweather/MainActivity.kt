@@ -5,14 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.arjun.core_ui.theme.RadiusAgentWeatherTheme
 import com.arjun.radiusagentweather.navigation.CoreFeatureNavigator
 import com.arjun.radiusagentweather.navigation.RootNavGraph
 import com.arjun.weather.presentation.WeatherNavGraph
-import com.arjun.weather.presentation.destinations.WeatherHomeScreenDestination
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +31,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+                    val snackbarHostState = remember { SnackbarHostState() }
                     val modifier = Modifier
                     DestinationsNavHost(
                         navController = navController,
@@ -37,6 +40,7 @@ class MainActivity : ComponentActivity() {
                         dependenciesContainerBuilder = {
                             dependency(modifier)
                             dependency(CoreFeatureNavigator(destination, navController))
+                            dependency(snackbarHostState)
                         }
                     )
                 }
