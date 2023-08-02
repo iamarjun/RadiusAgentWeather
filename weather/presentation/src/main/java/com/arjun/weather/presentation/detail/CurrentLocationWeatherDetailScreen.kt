@@ -28,12 +28,14 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BeachAccess
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -45,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,17 +56,20 @@ import coil.compose.AsyncImage
 import com.arjun.core_ui.Dimensions
 import com.arjun.core_ui.LocalSpacing
 import com.arjun.core_ui.theme.RadiusAgentAlabaster
+import com.arjun.core_ui.theme.RadiusAgentGeneralAccent
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray3
+import com.arjun.weather.domain.model.Alert
 import com.arjun.weather.presentation.detail.components.UnitText
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Destination
 fun CurrentLocationWeatherDetailScreen(
@@ -170,8 +176,105 @@ fun CurrentLocationWeatherDetailScreen(
                 item {
                     WeatherMiscInfo(modifier, spacing, state)
                 }
+
+                item {
+                    Column(
+                        modifier = modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+
+                        AlertHeader(modifier)
+
+                        state.currentLocationWeather
+                            ?.alerts
+                            ?.alert
+                            ?.filterNotNull()
+                            ?.forEach { alert -> Alert(modifier, spacing, alert) }
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun AlertHeader(modifier: Modifier) {
+    ListItem(
+        modifier = modifier,
+        leadingContent = {
+            Icon(
+                imageVector = Icons.Default.NotificationsNone,
+                contentDescription = "Alert",
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        },
+        headlineContent = {
+            Text(
+                text = "Alerts",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+    )
+}
+
+@Composable
+private fun Alert(
+    modifier: Modifier,
+    spacing: Dimensions,
+    alert: Alert
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(5))
+            .background(RadiusAgentAlabaster)
+            .padding(spacing.spaceMedium),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
+    ) {
+        Text(
+            modifier = modifier
+                .clip(RoundedCornerShape(10))
+                .background(RadiusAgentGeneralAccent)
+                .padding(spacing.spaceSmall)
+                .align(Alignment.End),
+            text = alert.event ?: "",
+            color = Color.White
+        )
+
+        Text(
+            text = alert.headline ?: "",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        val formatter =
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME
+        val outputFormatter =
+            DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a")
+
+        Text(
+            text = "${
+                OffsetDateTime.parse(alert.effective, formatter)
+                    .toLocalDateTime()
+                    .format(outputFormatter)
+            } - ${
+                OffsetDateTime.parse(alert.expires, formatter)
+                    .toLocalDateTime()
+                    .format(outputFormatter)
+            }",
+            style = MaterialTheme.typography.labelMedium
+        )
+
+        Text(
+            text = alert.desc ?: "",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
     }
 }
 

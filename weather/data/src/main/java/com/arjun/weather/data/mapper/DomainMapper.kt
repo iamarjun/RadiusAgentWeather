@@ -1,6 +1,7 @@
 package com.arjun.weather.data.mapper
 
 import com.arjun.weather.data.remote.dto.AirQualityResult
+import com.arjun.weather.data.remote.dto.AlertResult
 import com.arjun.weather.data.remote.dto.AlertsResult
 import com.arjun.weather.data.remote.dto.AstroResult
 import com.arjun.weather.data.remote.dto.ConditionResult
@@ -12,6 +13,7 @@ import com.arjun.weather.data.remote.dto.HourResult
 import com.arjun.weather.data.remote.dto.LocationResult
 import com.arjun.weather.data.remote.dto.WeatherResult
 import com.arjun.weather.domain.model.AirQuality
+import com.arjun.weather.domain.model.Alert
 import com.arjun.weather.domain.model.Alerts
 import com.arjun.weather.domain.model.Astro
 import com.arjun.weather.domain.model.Condition
@@ -71,8 +73,6 @@ object DomainMapper {
         so2 = so2,
         usEpaIndex = usEpaIndex
     )
-
-    fun AlertsResult.toAlerts() = Alerts(alert = listOf())
 
     fun AstroResult.toAstro() = Astro(
         isMoonUp = isMoonUp,
@@ -162,6 +162,24 @@ object DomainMapper {
 
     fun ForecastResult.toForecast() =
         Forecast(forecastday = forecastday?.map { it?.toForecastDay() })
+
+    fun AlertResult.toAlert() = Alert(
+        areas = areas,
+        category = category,
+        certainty = certainty,
+        desc = desc,
+        effective = effective,
+        event = event,
+        expires = expires,
+        headline = headline,
+        instruction = instruction,
+        msgtype = msgtype,
+        note = note,
+        severity = severity,
+        urgency = urgency
+    )
+
+    fun AlertsResult.toAlerts() = Alerts(alert = alerts?.map { it?.toAlert() })
 
     fun CurrentLocationWeatherResult.toCurrentLocationWeather() = CurrentLocationWeather(
         location = location.toLocation(),

@@ -9,5 +9,5 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class Alerts(
-    val alert: List<String?>?
+    val alert: List<Alert?>?
 ) : Parcelable
