@@ -152,42 +152,11 @@ fun CurrentLocationWeatherDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(spacing.spaceLarge)
             ) {
                 item {
-                    Column {
-                        Text(
-                            text = state.currentLocationWeather?.location?.name!!,
-                            style = MaterialTheme.typography.displaySmall
-                        )
-                        Spacer(modifier = modifier.height(spacing.spaceSmall))
-                        Text(
-                            text = "${state.currentLocationWeather?.location?.name!!}, ${state.currentLocationWeather?.location?.country!!}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
+                    CurrentLocation(state, modifier, spacing)
                 }
 
                 item {
-                    Row(
-                        modifier = modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        UnitText(
-                            modifier = modifier,
-                            value = "${state.currentLocationWeather?.current?.feelslikeC}",
-                            unit = "°C"
-                        )
-                        Column {
-                            AsyncImage(
-                                modifier = modifier.size(64.dp),
-                                model = "https:${state.currentLocationWeather?.current?.condition?.icon}",
-                                contentDescription = "Current Weather Condition"
-                            )
-                            Text(
-                                text = "feels like ${state.currentLocationWeather?.current?.feelslikeC} °C",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
+                    WeatherPreview(modifier, state)
                 }
 
                 item {
@@ -203,6 +172,54 @@ fun CurrentLocationWeatherDetailScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun WeatherPreview(
+    modifier: Modifier,
+    state: CurrentLocationWeatherDetailScreenContract.State
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        UnitText(
+            modifier = modifier,
+            value = "${state.currentLocationWeather?.current?.feelslikeC}",
+            unit = "°C"
+        )
+        Column {
+            AsyncImage(
+                modifier = modifier.size(64.dp),
+                model = "https:${state.currentLocationWeather?.current?.condition?.icon}",
+                contentDescription = "Current Weather Condition"
+            )
+            Text(
+                text = "feels like ${state.currentLocationWeather?.current?.feelslikeC} °C",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+private fun CurrentLocation(
+    state: CurrentLocationWeatherDetailScreenContract.State,
+    modifier: Modifier,
+    spacing: Dimensions
+) {
+    Column {
+        Text(
+            text = state.currentLocationWeather?.location?.name!!,
+            style = MaterialTheme.typography.displaySmall
+        )
+        Spacer(modifier = modifier.height(spacing.spaceSmall))
+        Text(
+            text = "${state.currentLocationWeather?.location?.name!!}, ${state.currentLocationWeather?.location?.country!!}",
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
