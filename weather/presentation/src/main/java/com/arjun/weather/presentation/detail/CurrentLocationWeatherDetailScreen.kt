@@ -106,44 +106,32 @@ fun CurrentLocationWeatherDetailScreen(
     val spacing = LocalSpacing.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                modifier = modifier,
-                title = { },
-                navigationIcon = {
-                    Icon(
-                        modifier = modifier.clickable {
-                            viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
-                        },
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back Button"
-                    )
-                },
-                actions = {
-                    Row(
-                        modifier = modifier.align(Alignment.CenterVertically),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Back Button"
-                        )
-                        Text(text = "Add")
-                    }
-                }
+    Scaffold(modifier = modifier, topBar = {
+        TopAppBar(modifier = modifier, title = { }, navigationIcon = {
+            Icon(
+                modifier = modifier.clickable {
+                    viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
+                }, imageVector = Icons.Default.ArrowBack, contentDescription = "Back Button"
             )
-        }
-    ) {
+        }, actions = {
+            Row(
+                modifier = modifier.align(Alignment.CenterVertically),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add, contentDescription = "Back Button"
+                )
+                Text(text = "Add")
+            }
+        })
+    }) {
 
         if (state.isLoading) {
             Box(
                 modifier = modifier
                     .padding(it)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize(), contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
@@ -180,16 +168,13 @@ fun CurrentLocationWeatherDetailScreen(
                 item {
                     Column(
                         modifier = modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium),
+                        verticalArrangement = Arrangement.spacedBy(spacing.spaceSmall),
                         horizontalAlignment = Alignment.Start
                     ) {
 
                         AlertHeader(modifier)
 
-                        state.currentLocationWeather
-                            ?.alerts
-                            ?.alert
-                            ?.filterNotNull()
+                        state.currentLocationWeather?.alerts?.alert?.filterNotNull()
                             ?.forEach { alert -> Alert(modifier, spacing, alert) }
                     }
                 }
@@ -200,32 +185,24 @@ fun CurrentLocationWeatherDetailScreen(
 
 @Composable
 private fun AlertHeader(modifier: Modifier) {
-    ListItem(
-        modifier = modifier,
-        leadingContent = {
-            Icon(
-                imageVector = Icons.Default.NotificationsNone,
-                contentDescription = "Alert",
-                tint = MaterialTheme.colorScheme.primary,
+    ListItem(modifier = modifier, leadingContent = {
+        Icon(
+            imageVector = Icons.Default.NotificationsNone,
+            contentDescription = "Alert",
+            tint = MaterialTheme.colorScheme.primary,
+        )
+    }, headlineContent = {
+        Text(
+            text = "Alerts", style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold
             )
-        },
-        headlineContent = {
-            Text(
-                text = "Alerts",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-        }
-    )
+        )
+    })
 }
 
 @Composable
 private fun Alert(
-    modifier: Modifier,
-    spacing: Dimensions,
-    alert: Alert
+    modifier: Modifier, spacing: Dimensions, alert: Alert
 ) {
     Column(
         modifier = modifier
@@ -243,7 +220,8 @@ private fun Alert(
                 .padding(spacing.spaceSmall)
                 .align(Alignment.End),
             text = alert.event ?: "",
-            color = Color.White
+            color = Color.White,
+            style = MaterialTheme.typography.labelSmall
         )
 
         Text(
@@ -252,27 +230,21 @@ private fun Alert(
             fontWeight = FontWeight.Bold
         )
 
-        val formatter =
-            DateTimeFormatter.ISO_OFFSET_DATE_TIME
-        val outputFormatter =
-            DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a")
+        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+        val outputFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy hh:mm a")
 
         Text(
             text = "${
-                OffsetDateTime.parse(alert.effective, formatter)
-                    .toLocalDateTime()
+                OffsetDateTime.parse(alert.effective, formatter).toLocalDateTime()
                     .format(outputFormatter)
             } - ${
-                OffsetDateTime.parse(alert.expires, formatter)
-                    .toLocalDateTime()
+                OffsetDateTime.parse(alert.expires, formatter).toLocalDateTime()
                     .format(outputFormatter)
-            }",
-            style = MaterialTheme.typography.labelMedium
+            }", style = MaterialTheme.typography.labelMedium
         )
 
         Text(
-            text = alert.desc ?: "",
-            style = MaterialTheme.typography.bodyMedium
+            text = alert.desc ?: "", style = MaterialTheme.typography.bodyMedium
         )
 
     }
@@ -280,8 +252,7 @@ private fun Alert(
 
 @Composable
 private fun WeatherPreview(
-    modifier: Modifier,
-    state: CurrentLocationWeatherDetailScreenContract.State
+    modifier: Modifier, state: CurrentLocationWeatherDetailScreenContract.State
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -309,9 +280,7 @@ private fun WeatherPreview(
 
 @Composable
 private fun CurrentLocation(
-    state: CurrentLocationWeatherDetailScreenContract.State,
-    modifier: Modifier,
-    spacing: Dimensions
+    state: CurrentLocationWeatherDetailScreenContract.State, modifier: Modifier, spacing: Dimensions
 ) {
     Column {
         Text(
@@ -329,15 +298,12 @@ private fun CurrentLocation(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun WeatherMiscInfo(
-    modifier: Modifier,
-    spacing: Dimensions,
-    state: CurrentLocationWeatherDetailScreenContract.State
+    modifier: Modifier, spacing: Dimensions, state: CurrentLocationWeatherDetailScreenContract.State
 ) {
     val rows = 2
     val columns = 2
     FlowRow(
-        modifier = modifier,
-        maxItemsInEachRow = rows
+        modifier = modifier, maxItemsInEachRow = rows
     ) {
         val itemModifier = modifier
             .padding(4.dp)
@@ -353,12 +319,10 @@ private fun WeatherMiscInfo(
                     .padding(spacing.spaceMedium)
             ) {
                 Column(
-                    modifier = modifier,
-                    horizontalAlignment = Alignment.Start
+                    modifier = modifier, horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = modifier, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.BeachAccess,
@@ -392,12 +356,10 @@ private fun WeatherMiscInfo(
                     .padding(spacing.spaceMedium)
             ) {
                 Column(
-                    modifier = modifier,
-                    horizontalAlignment = Alignment.Start
+                    modifier = modifier, horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = modifier, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Air,
@@ -406,8 +368,7 @@ private fun WeatherMiscInfo(
                         )
                         Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
                         Text(
-                            text = "Wind",
-                            style = MaterialTheme.typography.labelMedium.copy(
+                            text = "Wind", style = MaterialTheme.typography.labelMedium.copy(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         )
@@ -438,12 +399,10 @@ private fun WeatherMiscInfo(
                     .padding(spacing.spaceMedium)
             ) {
                 Column(
-                    modifier = modifier,
-                    horizontalAlignment = Alignment.Start
+                    modifier = modifier, horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = modifier, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.WbSunny,
@@ -452,8 +411,7 @@ private fun WeatherMiscInfo(
                         )
                         Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
                         Text(
-                            text = "UV Index",
-                            style = MaterialTheme.typography.labelMedium.copy(
+                            text = "UV Index", style = MaterialTheme.typography.labelMedium.copy(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         )
@@ -477,12 +435,10 @@ private fun WeatherMiscInfo(
                     .padding(spacing.spaceMedium)
             ) {
                 Column(
-                    modifier = modifier,
-                    horizontalAlignment = Alignment.Start
+                    modifier = modifier, horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = modifier, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.WbSunny,
@@ -491,15 +447,14 @@ private fun WeatherMiscInfo(
                         )
                         Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
                         Text(
-                            text = "Sun",
-                            style = MaterialTheme.typography.labelMedium.copy(
+                            text = "Sun", style = MaterialTheme.typography.labelMedium.copy(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         )
                     }
                     Spacer(modifier = modifier.weight(1f))
-                    Row {
-                        Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 modifier = modifier.size(12.dp),
                                 imageVector = Icons.Default.WbSunny,
@@ -514,7 +469,7 @@ private fun WeatherMiscInfo(
                             )
                         }
                         Spacer(modifier = modifier.weight(1f))
-                        Row {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 modifier = modifier.size(12.dp),
                                 imageVector = Icons.Default.WbSunny,
@@ -537,13 +492,10 @@ private fun WeatherMiscInfo(
 
 @Composable
 private fun WeeklyForecast(
-    modifier: Modifier,
-    spacing: Dimensions,
-    state: CurrentLocationWeatherDetailScreenContract.State
+    modifier: Modifier, spacing: Dimensions, state: CurrentLocationWeatherDetailScreenContract.State
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(5)
+        modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(5)
     ) {
         Column(
             modifier = modifier
@@ -581,11 +533,7 @@ private fun WeeklyForecast(
                 verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                state.currentLocationWeather
-                    ?.forecast
-                    ?.forecastday
-                    ?.filterNotNull()
-                    ?.forEach {
+                state.currentLocationWeather?.forecast?.forecastday?.filterNotNull()?.forEach {
                         Column(
                             modifier = modifier,
                             verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
@@ -594,17 +542,13 @@ private fun WeeklyForecast(
                                 modifier = modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                val formatter =
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                val dayOfWeek =
-                                    LocalDate.parse(
-                                        it.date,
-                                        formatter
-                                    ).dayOfWeek
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                val dayOfWeek = LocalDate.parse(
+                                    it.date, formatter
+                                ).dayOfWeek
 
                                 Text(
-                                    text = "$dayOfWeek",
-                                    style = MaterialTheme.typography.labelLarge
+                                    text = "$dayOfWeek", style = MaterialTheme.typography.labelLarge
                                 )
 
                                 Spacer(modifier = modifier.weight(1f))
@@ -663,13 +607,10 @@ private fun WeeklyForecast(
 
 @Composable
 private fun HourlyForecast(
-    modifier: Modifier,
-    spacing: Dimensions,
-    state: CurrentLocationWeatherDetailScreenContract.State
+    modifier: Modifier, spacing: Dimensions, state: CurrentLocationWeatherDetailScreenContract.State
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(5)
+        modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(5)
     ) {
         Column(
             modifier = modifier
@@ -694,12 +635,7 @@ private fun HourlyForecast(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                state.currentLocationWeather
-                    ?.forecast
-                    ?.forecastday
-                    ?.first()
-                    ?.hour
-                    ?.filterNotNull()
+                state.currentLocationWeather?.forecast?.forecastday?.first()?.hour?.filterNotNull()
                     ?.let {
                         items(it) {
                             Column(
@@ -707,13 +643,10 @@ private fun HourlyForecast(
                                 verticalArrangement = Arrangement.spacedBy(space = spacing.spaceSmall),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                val formatter =
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-                                val hour =
-                                    LocalDateTime.parse(it.time, formatter).hour
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                                val hour = LocalDateTime.parse(it.time, formatter).hour
                                 Text(
-                                    text = "$hour",
-                                    style = MaterialTheme.typography.labelLarge
+                                    text = "$hour", style = MaterialTheme.typography.labelLarge
                                 )
                                 AsyncImage(
                                     modifier = modifier.size(20.dp),
