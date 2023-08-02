@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,16 +15,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.BeachAccess
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -38,12 +44,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.arjun.core_ui.Dimensions
 import com.arjun.core_ui.LocalSpacing
+import com.arjun.core_ui.theme.RadiusAgentAlabaster
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray3
 import com.arjun.weather.presentation.detail.components.UnitText
@@ -54,7 +63,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 @Destination
 fun CurrentLocationWeatherDetailScreen(
@@ -76,6 +85,7 @@ fun CurrentLocationWeatherDetailScreen(
                 CurrentLocationWeatherDetailScreenContract.Effect.NavigateUp -> {
                     navigator.navigateUp()
                 }
+
                 is CurrentLocationWeatherDetailScreenContract.Effect.ShowToast -> {
                     snackbarHostState.showSnackbar(it.message)
                 }
@@ -186,6 +196,219 @@ fun CurrentLocationWeatherDetailScreen(
 
                 item {
                     WeeklyForecast(modifier, spacing, state)
+                }
+
+                item {
+                    WeatherMiscInfo(modifier, spacing, state)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun WeatherMiscInfo(
+    modifier: Modifier,
+    spacing: Dimensions,
+    state: CurrentLocationWeatherDetailScreenContract.State
+) {
+    val rows = 2
+    val columns = 2
+    FlowRow(
+        modifier = modifier,
+        maxItemsInEachRow = rows
+    ) {
+        val itemModifier = modifier
+            .padding(4.dp)
+            .height(80.dp)
+            .weight(1f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(RadiusAgentAlabaster)
+
+        Box(modifier = itemModifier.fillMaxWidth()) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(spacing.spaceMedium)
+            ) {
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.BeachAccess,
+                            contentDescription = "Precipitation",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
+                        Text(
+                            text = "Precipitation",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                    Spacer(modifier = modifier.weight(1f))
+                    Text(
+                        text = "${state.currentLocationWeather?.current?.precipMm} mm",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+            }
+        }
+
+        Box(modifier = itemModifier.fillMaxWidth()) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(spacing.spaceMedium)
+            ) {
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Air,
+                            contentDescription = "Wind",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
+                        Text(
+                            text = "Wind",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                    Spacer(modifier = modifier.weight(1f))
+                    Text(
+                        text = "${state.currentLocationWeather?.current?.windKph} kmph",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+                Spacer(modifier = modifier.weight(1f))
+                Text(
+                    text = "${state.currentLocationWeather?.current?.windDir}",
+                    style = MaterialTheme.typography.displaySmall.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                )
+            }
+        }
+
+        Box(modifier = itemModifier.fillMaxWidth()) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(spacing.spaceMedium)
+            ) {
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = "UV Index",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
+                        Text(
+                            text = "UV Index",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                    Spacer(modifier = modifier.weight(1f))
+                    Text(
+                        text = "${state.currentLocationWeather?.current?.uv}",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+            }
+        }
+
+        Box(modifier = itemModifier.fillMaxWidth()) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(spacing.spaceMedium)
+            ) {
+                Column(
+                    modifier = modifier,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        modifier = modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = "Sun",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = modifier.width(spacing.spaceExtraSmall))
+                        Text(
+                            text = "Sun",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                    Spacer(modifier = modifier.weight(1f))
+                    Row {
+                        Row {
+                            Icon(
+                                modifier = modifier.size(12.dp),
+                                imageVector = Icons.Default.WbSunny,
+                                contentDescription = "Sun",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "${state.currentLocationWeather?.forecast?.forecastday?.first()?.astro?.sunrise}",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        }
+                        Spacer(modifier = modifier.weight(1f))
+                        Row {
+                            Icon(
+                                modifier = modifier.size(12.dp),
+                                imageVector = Icons.Default.WbSunny,
+                                contentDescription = "Sun",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "${state.currentLocationWeather?.forecast?.forecastday?.first()?.astro?.sunset}",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
