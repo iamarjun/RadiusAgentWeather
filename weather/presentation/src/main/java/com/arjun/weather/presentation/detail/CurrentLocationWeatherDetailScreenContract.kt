@@ -9,6 +9,7 @@ class CurrentLocationWeatherDetailScreenContract {
 
     sealed class Event : UiEvent {
         data object OnBackPress : Event()
+        data class SaveToDb(val currentLocationWeather: CurrentLocationWeather?) : Event()
     }
 
     sealed class Effect : UiEffect {

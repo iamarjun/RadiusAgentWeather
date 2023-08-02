@@ -106,26 +106,36 @@ fun CurrentLocationWeatherDetailScreen(
     val spacing = LocalSpacing.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(modifier = modifier, topBar = {
-        TopAppBar(modifier = modifier, title = { }, navigationIcon = {
-            Icon(
-                modifier = modifier.clickable {
-                    viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
-                }, imageVector = Icons.Default.ArrowBack, contentDescription = "Back Button"
-            )
-        }, actions = {
-            Row(
-                modifier = modifier.align(Alignment.CenterVertically),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(modifier = modifier, title = { }, navigationIcon = {
                 Icon(
-                    imageVector = Icons.Default.Add, contentDescription = "Back Button"
+                    modifier = modifier.clickable {
+                        viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
+                    }, imageVector = Icons.Default.ArrowBack, contentDescription = "Back Button"
                 )
-                Text(text = "Add")
-            }
-        })
-    }) {
+            }, actions = {
+                Row(
+                    modifier = modifier
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            viewModel.setEvent(
+                                CurrentLocationWeatherDetailScreenContract.Event.SaveToDb(
+                                    viewModel.currentState.currentLocationWeather
+                                )
+                            )
+                        },
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add, contentDescription = "Back Button"
+                    )
+                    Text(text = "Add")
+                }
+            })
+        }) {
 
         if (state.isLoading) {
             Box(
@@ -534,72 +544,72 @@ private fun WeeklyForecast(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 state.currentLocationWeather?.forecast?.forecastday?.filterNotNull()?.forEach {
-                        Column(
-                            modifier = modifier,
-                            verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
+                    Column(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
+                    ) {
+                        Row(
+                            modifier = modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                val dayOfWeek = LocalDate.parse(
-                                    it.date, formatter
-                                ).dayOfWeek
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                            val dayOfWeek = LocalDate.parse(
+                                it.date, formatter
+                            ).dayOfWeek
 
-                                Text(
-                                    text = "$dayOfWeek", style = MaterialTheme.typography.labelLarge
+                            Text(
+                                text = "$dayOfWeek", style = MaterialTheme.typography.labelLarge
+                            )
+
+                            Spacer(modifier = modifier.weight(1f))
+
+                            Row(
+                                modifier = modifier,
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    spacing.spaceMedium
+                                )
+                            ) {
+                                AsyncImage(
+                                    modifier = modifier.size(20.dp),
+                                    model = "https:${it.day?.condition?.icon}",
+                                    contentDescription = "Current Weather Condition"
                                 )
 
-                                Spacer(modifier = modifier.weight(1f))
-
-                                Row(
-                                    modifier = modifier,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(
-                                        spacing.spaceMedium
+                                Row {
+                                    Icon(
+                                        modifier = modifier,
+                                        imageVector = Icons.Default.ArrowUpward,
+                                        contentDescription = "Max Temperature"
                                     )
-                                ) {
-                                    AsyncImage(
-                                        modifier = modifier.size(20.dp),
-                                        model = "https:${it.day?.condition?.icon}",
-                                        contentDescription = "Current Weather Condition"
+                                    Text(
+                                        text = "${it.day?.maxtempC}°C",
+                                        style = MaterialTheme.typography.bodyLarge
                                     )
-
-                                    Row {
-                                        Icon(
-                                            modifier = modifier,
-                                            imageVector = Icons.Default.ArrowUpward,
-                                            contentDescription = "Max Temperature"
-                                        )
-                                        Text(
-                                            text = "${it.day?.maxtempC}°C",
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-
-                                    Row {
-                                        Icon(
-                                            modifier = modifier,
-                                            imageVector = Icons.Default.ArrowDownward,
-                                            contentDescription = "Max Temperature"
-                                        )
-                                        Text(
-                                            text = "${it.day?.mintempC}°C",
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-
                                 }
-                            }
 
-                            Divider(
-                                modifier = modifier.fillMaxWidth(),
-                                thickness = 0.25.dp,
-                                color = RadiusAgentSupportingGray
-                            )
+                                Row {
+                                    Icon(
+                                        modifier = modifier,
+                                        imageVector = Icons.Default.ArrowDownward,
+                                        contentDescription = "Max Temperature"
+                                    )
+                                    Text(
+                                        text = "${it.day?.mintempC}°C",
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
+
+                            }
                         }
+
+                        Divider(
+                            modifier = modifier.fillMaxWidth(),
+                            thickness = 0.25.dp,
+                            color = RadiusAgentSupportingGray
+                        )
                     }
+                }
             }
         }
     }

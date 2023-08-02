@@ -7,12 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class Day(
-    val airQuality: AirQuality?,
-    val avghumidity: Int?,
-    val avgtempC: Double?,
-    val avgtempF: Double?,
-    val avgvisKm: Double?,
-    val avgvisMiles: Int?,
     val condition: Condition?,
     val dailyChanceOfRain: Int?,
     val dailyChanceOfSnow: Int?,
