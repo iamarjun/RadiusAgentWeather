@@ -22,6 +22,10 @@ class CurrentLocationWeatherDetailScreenViewModel @Inject constructor(
                     CurrentLocationWeatherDetailScreenContract.Effect.NavigateUp
                 }
             }
+
+            is CurrentLocationWeatherDetailScreenContract.Event.SaveToDb -> {
+
+            }
         }
     }
 

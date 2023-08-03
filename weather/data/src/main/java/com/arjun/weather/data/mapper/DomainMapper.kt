@@ -37,9 +37,7 @@ object DomainMapper {
     fun WeatherResult.toWeather() = Weather(
         condition = condition?.toCondition(),
         feelslikeC = feelslikeC,
-        lastUpdated = lastUpdated,
         precipMm = precipMm,
-        tempC = tempC,
         uv = uv,
         windDir = windDir,
         windKph = windKph,
@@ -51,38 +49,20 @@ object DomainMapper {
     )
 
     fun ConditionResult.toCondition() = Condition(
-        code = code,
         icon = icon,
         text = text
     )
 
     fun DayResult.toDay() = Day(
         condition = condition?.toCondition(),
-        dailyChanceOfRain = dailyChanceOfRain,
-        dailyChanceOfSnow = dailyChanceOfSnow,
-        dailyWillItRain = dailyWillItRain,
-        dailyWillItSnow = dailyWillItSnow,
         maxtempC = maxtempC,
-        maxtempF = maxtempF,
-        maxwindKph = maxwindKph,
-        maxwindMph = maxwindMph,
         mintempC = mintempC,
-        mintempF = mintempF,
-        totalprecipIn = totalprecipIn,
-        totalprecipMm = totalprecipMm,
-        totalsnowCm = totalsnowCm,
-        uv = uv
     )
 
     fun HourResult.toHour() = Hour(
         condition = condition?.toCondition(),
-        feelslikeC = feelslikeC,
-        precipIn = precipIn,
         tempC = tempC,
         time = time,
-        uv = uv,
-        windDir = windDir,
-        windKph = windKph,
     )
 
     fun ForecastdayResult.toForecastDay() = Forecastday(
