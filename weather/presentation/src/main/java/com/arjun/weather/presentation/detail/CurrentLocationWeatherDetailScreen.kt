@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BeachAccess
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
@@ -80,7 +81,6 @@ fun CurrentLocationWeatherDetailScreen(
     viewModel: CurrentLocationWeatherDetailScreenViewModel = hiltViewModel()
 ) {
 
-
     LaunchedEffect(key1 = Unit) {
         viewModel.getCurrentLocationWeather(slug)
     }
@@ -109,33 +109,57 @@ fun CurrentLocationWeatherDetailScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(modifier = modifier, title = { }, navigationIcon = {
-                Icon(
-                    modifier = modifier.clickable {
-                        viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
-                    }, imageVector = Icons.Default.ArrowBack, contentDescription = "Back Button"
-                )
-            }, actions = {
-                Row(
-                    modifier = modifier
-                        .align(Alignment.CenterVertically)
-                        .clickable {
-                            viewModel.setEvent(
-                                CurrentLocationWeatherDetailScreenContract.Event.SaveToDb(
-                                    viewModel.currentState.currentLocationWeather
-                                )
-                            )
-                        },
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            TopAppBar(
+                modifier = modifier,
+                title = { },
+                navigationIcon = {
                     Icon(
-                        imageVector = Icons.Default.Add, contentDescription = "Back Button"
+                        modifier = modifier.clickable {
+                            viewModel.setEvent(CurrentLocationWeatherDetailScreenContract.Event.OnBackPress)
+                        }, imageVector = Icons.Default.ArrowBack, contentDescription = "Back Button"
                     )
-                    Text(text = "Add")
+                },
+                actions = {
+                    Row(
+                        modifier = modifier
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                if (!state.isSaved) {
+                                    viewModel.setEvent(
+                                        CurrentLocationWeatherDetailScreenContract.Event.SaveToDb(
+                                            viewModel.currentState.currentLocationWeather
+                                        )
+                                    )
+                                } else {
+                                    viewModel.setEvent(
+                                        CurrentLocationWeatherDetailScreenContract.Event.DeleteFromDb(
+                                            viewModel.currentState.currentLocationWeather?.latlon
+                                        )
+                                    )
+                                }
+                            },
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (!state.isSaved) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Save"
+                            )
+                            Text(text = "Add")
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = "Delete",
+                                tint = Color.Red
+                            )
+                            Text(text = "Remove", color = Color.Red)
+                        }
+                    }
                 }
-            })
-        }) {
+            )
+        }
+    ) {
 
         if (state.isLoading) {
             Box(

@@ -4,12 +4,14 @@ import com.arjun.core.state_management.UiEffect
 import com.arjun.core.state_management.UiEvent
 import com.arjun.core.state_management.UiState
 import com.arjun.weather.domain.model.CurrentLocationWeather
+import com.arjun.weather.domain.model.Location
 
 class CurrentLocationWeatherDetailScreenContract {
 
     sealed class Event : UiEvent {
         data object OnBackPress : Event()
         data class SaveToDb(val currentLocationWeather: CurrentLocationWeather?) : Event()
+        data class DeleteFromDb(val latLon: String?) : Event()
     }
 
     sealed class Effect : UiEffect {
@@ -21,6 +23,7 @@ class CurrentLocationWeatherDetailScreenContract {
     data class State(
         val isSaved: Boolean = false,
         val isLoading: Boolean = true,
-        val currentLocationWeather: CurrentLocationWeather? = null
+        val currentLocationWeather: CurrentLocationWeather? = null,
+        val cachedLocationList: List<Location> = emptyList()
     ) : UiState
 }

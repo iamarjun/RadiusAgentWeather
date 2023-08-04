@@ -1,5 +1,6 @@
 package com.arjun.weather.data.mapper
 
+import com.arjun.weather.data.local.entity.LocationEntity
 import com.arjun.weather.data.remote.dto.AlertResult
 import com.arjun.weather.data.remote.dto.AlertsResult
 import com.arjun.weather.data.remote.dto.AstroResult
@@ -98,5 +99,21 @@ object DomainMapper {
         current = current.toWeather(),
         alerts = alerts?.toAlerts(),
         forecast = forecast?.toForecast()
+    )
+
+    fun CurrentLocationWeather.toLocationEntity() = LocationEntity(
+        country = location.country,
+        lat = location.lat,
+        lon = location.lon,
+        name = location.name,
+        region = location.region,
+        url = location.url,
+        icon = current.condition?.icon,
+        text = current.condition?.text,
+        feelslikeC = current.feelslikeC,
+        precipMm = current.precipMm,
+        uv = current.uv,
+        windDir = current.windDir,
+        windKph = current.windKph
     )
 }

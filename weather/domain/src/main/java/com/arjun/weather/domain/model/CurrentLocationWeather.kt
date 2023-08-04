@@ -9,4 +9,8 @@ data class CurrentLocationWeather(
     val current: Weather,
     val alerts: Alerts?,
     val forecast: Forecast?
-) : Parcelable
+) : Parcelable {
+
+    val latlon
+        get() = "${location.lat},${location.lon}"
+}

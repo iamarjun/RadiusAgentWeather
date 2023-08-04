@@ -9,4 +9,10 @@ interface WeatherRepository {
 
     suspend fun getWeatherForLocation(slug: String): Result<CurrentLocationWeather>
 
+    suspend fun saveLocationToCache(currentLocationWeather: CurrentLocationWeather): Result<Boolean>
+
+    suspend fun isLocationPresent(latlon: String): Result<Boolean>
+
+    suspend fun deleteLocationFromCache(latlon: String): Result<Boolean>
+
 }
