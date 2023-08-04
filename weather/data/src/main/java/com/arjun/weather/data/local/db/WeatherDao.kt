@@ -20,5 +20,5 @@ abstract class WeatherDao {
     abstract fun deleteLocation(latlon: String): Int
 
     @Query("SELECT * FROM LocationEntity")
-    abstract fun getLocations(): Flow<LocationEntity>
+    abstract fun getLocations(): Flow<List<LocationEntity>>
 }

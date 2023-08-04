@@ -1,12 +1,12 @@
 package com.arjun.weather.presentation.home
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,30 +19,35 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.arjun.core_ui.LocalSpacing
 import com.arjun.core_ui.theme.RadiusAgentPrimary
 import com.arjun.weather.presentation.R
 import com.arjun.weather.presentation.home.components.SearchTextField
+import com.arjun.weather.presentation.home.components.SwipeBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -58,10 +63,7 @@ fun WeatherHomeScreen(
     navigator: WeatherHomeScreenNavigator,
     viewModel: WeatherHomeScreenViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) {
+    Scaffold(modifier = modifier, snackbarHost = { SnackbarHost(snackbarHostState) }) {
         modifier.apply {
             padding(it)
         }
@@ -74,7 +76,11 @@ fun WeatherHomeScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalPermissionsApi::class)
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalPermissionsApi::class,
+    ExperimentalMaterial3Api::class,
+)
 @Composable
 private fun HomeScreen(
     modifier: Modifier,
@@ -82,6 +88,10 @@ private fun HomeScreen(
     viewModel: WeatherHomeScreenViewModel,
     navigator: WeatherHomeScreenNavigator
 ) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setEvent(WeatherHomeScreenContract.Event.GetSavedLocations)
+    }
 
     val spacing = LocalSpacing.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -117,22 +127,22 @@ private fun HomeScreen(
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(spacing.spaceMedium)
         ) {
             Spacer(modifier = modifier.height(100.dp))
 
             Text(
+                modifier = modifier.padding(horizontal = spacing.spaceMedium),
                 text = "Weather App",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = modifier.height(spacing.spaceLarge))
+            Spacer(modifier = modifier.height(spacing.spaceMedium))
 
             SearchTextField(
-                modifier = modifier,
+                modifier = modifier.padding(horizontal = spacing.spaceSmall),
                 text = state.query ?: "",
                 onValueChange = {
                     viewModel.setEvent(WeatherHomeScreenContract.Event.OnQueryChange(it))
@@ -155,35 +165,42 @@ private fun HomeScreen(
                 shouldShowHint = state.showHint,
             )
 
-            Spacer(modifier = modifier.height(spacing.spaceLarge))
+            Spacer(modifier = modifier.height(spacing.spaceSmall))
 
             Box {
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = state.searchLocationResult.isEmpty(),
+                    visible = state.searchLocationResult.isEmpty() && state.savedLocations.isEmpty(),
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
                     Box(
-                        modifier = modifier.fillMaxSize(),
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(spacing.spaceMedium),
                         contentAlignment = Alignment.Center
                     ) {
                         when {
                             state.isSearching -> CircularProgressIndicator()
-                            state.searchLocationResult.isEmpty() -> Icon(
-                                modifier = modifier.size(88.dp),
-                                painter = painterResource(id = R.drawable.weather_mix),
-                                contentDescription = "Weather Placeholder"
-                            )
+                            state.searchLocationResult.isEmpty() -> {
+                                Column(
+                                    modifier = modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Search for a city or US/UK zip to check the weather",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                    Spacer(modifier = modifier.height(spacing.spaceExtraLarge))
+                                    Icon(
+                                        modifier = modifier.size(88.dp),
+                                        painter = painterResource(id = R.drawable.weather_mix),
+                                        contentDescription = "Weather Placeholder"
+                                    )
+                                }
+                            }
                         }
-
                     }
-                    Spacer(modifier = modifier.height(spacing.spaceExtraLarge))
-
-                    Text(
-                        text = "Search for a city or US/UK zip to check the weather",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light
-                    )
                 }
 
                 androidx.compose.animation.AnimatedVisibility(
@@ -197,20 +214,16 @@ private fun HomeScreen(
                                 modifier = modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        if (locationPermissions.allPermissionsGranted)
-                                            viewModel.getCurrentLocation()
-                                        else
-                                            locationPermissions.launchMultiplePermissionRequest()
-                                    },
-                                headlineContent = {
+                                        if (locationPermissions.allPermissionsGranted) viewModel.getCurrentLocation()
+                                        else locationPermissions.launchMultiplePermissionRequest()
+                                    }, headlineContent = {
                                     Text(
                                         text = "Current Location",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = RadiusAgentPrimary,
                                         fontWeight = FontWeight.Bold
                                     )
-                                },
-                                leadingContent = {
+                                }, leadingContent = {
                                     Icon(
                                         imageVector = Icons.Default.NearMe,
                                         contentDescription = "Current Location",
@@ -243,11 +256,95 @@ private fun HomeScreen(
                             }
                             Divider(
                                 modifier = modifier.padding(
-                                    horizontal = spacing.spaceMedium,
-                                    vertical = spacing.spaceSmall
+                                    horizontal = spacing.spaceMedium, vertical = spacing.spaceSmall
                                 )
                             )
                         }
+                    }
+                }
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = state.savedLocations.isNotEmpty() && state.searchLocationResult.isEmpty(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    LazyColumn(
+                        modifier = modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(
+                            items = state.savedLocations,
+                            key = { it.latlon },
+                            itemContent = {
+                                val currentItem by rememberUpdatedState(newValue = it)
+                                val dismissState = rememberDismissState(
+                                    confirmValueChange = {
+                                        viewModel.setEvent(
+                                            WeatherHomeScreenContract.Event.OnItemDismissed(
+                                                currentItem
+                                            )
+                                        )
+                                        true
+                                    }
+                                )
+
+                                Column(
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            viewModel.setEvent(
+                                                WeatherHomeScreenContract.Event.OnSearchLocationResultClick(
+                                                    currentItem.latlon
+                                                )
+                                            )
+                                        },
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    SwipeToDismiss(
+                                        modifier = modifier
+                                            .fillMaxWidth(),
+                                        state = dismissState,
+                                        background = { SwipeBackground(dismissState = dismissState) },
+                                        dismissContent = {
+                                            Row(
+                                                modifier = modifier
+                                                    .fillMaxWidth()
+                                                    .padding(spacing.spaceMedium),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Column {
+                                                    Text(
+                                                        text = currentItem.location.name!!,
+                                                        style = MaterialTheme.typography.headlineSmall
+                                                    )
+                                                    Spacer(modifier = modifier.height(spacing.spaceSmall))
+                                                    Text(
+                                                        text = "${currentItem.location.name!!}, ${currentItem.location.country!!}",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+                                                Spacer(modifier = modifier.weight(1f))
+                                                Column {
+                                                    AsyncImage(
+                                                        modifier = modifier.size(40.dp),
+                                                        model = "https:${currentItem.current.condition?.icon}",
+                                                        contentDescription = "Current Weather Condition"
+                                                    )
+                                                    Text(
+                                                        text = "feels like ${currentItem.current.feelslikeC} °C",
+                                                        style = MaterialTheme.typography.bodySmall
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                    Divider(modifier = modifier.fillMaxWidth())
+                                }
+                            }
+                        )
                     }
                 }
             }

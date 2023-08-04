@@ -8,11 +8,18 @@ import com.arjun.weather.data.remote.api.WeatherApi
 import com.arjun.weather.domain.model.CurrentLocationWeather
 import com.arjun.weather.domain.model.Location
 import com.arjun.weather.domain.repository.WeatherRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class WeatherRepositoryImp @Inject constructor(
     private val weatherApi: WeatherApi, private val weatherDao: WeatherDao
 ) : WeatherRepository {
+
+    override fun getAllCachedLocation(): Flow<List<CurrentLocationWeather>> {
+        return weatherDao.getLocations().map { it.map { it.toCurrentLocationWeather() } }
+    }
+
     override suspend fun searchLocation(query: String): Result<List<Location>> {
         return try {
             val location = weatherApi.searchLocation(query = query)

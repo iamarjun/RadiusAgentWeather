@@ -2,8 +2,11 @@ package com.arjun.weather.domain.repository
 
 import com.arjun.weather.domain.model.CurrentLocationWeather
 import com.arjun.weather.domain.model.Location
+import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
+
+    fun getAllCachedLocation(): Flow<List<CurrentLocationWeather>>
 
     suspend fun searchLocation(query: String): Result<List<Location>>
 

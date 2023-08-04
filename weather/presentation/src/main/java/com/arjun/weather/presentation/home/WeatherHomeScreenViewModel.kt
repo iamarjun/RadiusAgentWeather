@@ -3,16 +3,23 @@ package com.arjun.weather.presentation.home
 import androidx.lifecycle.viewModelScope
 import com.arjun.core.state_management.BaseViewModel
 import com.arjun.weather.domain.location.LocationTracker
+import com.arjun.weather.domain.usecases.GetAllLocation
+import com.arjun.weather.domain.usecases.RemoveLocationFromCache
 import com.arjun.weather.domain.usecases.SearchLocation
+import com.arjun.weather.presentation.detail.CurrentLocationWeatherDetailScreenContract
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherHomeScreenViewModel @Inject constructor(
     private val searchLocation: SearchLocation,
-    private val locationTracker: LocationTracker
-) : BaseViewModel<WeatherHomeScreenContract.Event, WeatherHomeScreenContract.State, WeatherHomeScreenContract.Effect>() {
+    private val locationTracker: LocationTracker,
+    private val getAllLocation: GetAllLocation,
+    private val removeLocationFromCache: RemoveLocationFromCache,
+    ) : BaseViewModel<WeatherHomeScreenContract.Event, WeatherHomeScreenContract.State, WeatherHomeScreenContract.Effect>() {
     override fun createInitialState(): WeatherHomeScreenContract.State {
         return WeatherHomeScreenContract.State()
     }
@@ -56,6 +63,42 @@ class WeatherHomeScreenViewModel @Inject constructor(
                     )
                 }
             }
+
+            WeatherHomeScreenContract.Event.GetSavedLocations -> {
+                getSavedLocation()
+            }
+
+            is WeatherHomeScreenContract.Event.OnItemDismissed -> {
+                removeFromLocalCache(event.item.latlon)
+            }
+        }
+    }
+
+    private fun removeFromLocalCache(latLon: String?) {
+        viewModelScope.launch {
+            latLon?.let {
+                removeLocationFromCache(it)
+                    .onSuccess {
+
+                    }
+                    .onFailure {
+                        setEffect {
+                            WeatherHomeScreenContract.Effect.ShowToast(
+                                it.localizedMessage ?: "Something went wrong"
+                            )
+                        }
+                    }
+            }
+        }
+    }
+    private fun getSavedLocation() {
+        viewModelScope.launch {
+            getAllLocation().collectLatest {
+                setState {
+                    copy(savedLocations = it)
+                }
+            }
+
         }
     }
 

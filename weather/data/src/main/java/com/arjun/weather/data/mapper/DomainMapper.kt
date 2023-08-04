@@ -27,7 +27,6 @@ import com.arjun.weather.domain.model.Weather
 object DomainMapper {
     fun LocationResult.toLocation() = Location(
         country = country,
-        id = id,
         lat = lat,
         lon = lon,
         name = name,
@@ -115,5 +114,29 @@ object DomainMapper {
         uv = current.uv,
         windDir = current.windDir,
         windKph = current.windKph
+    )
+
+    fun LocationEntity.toCurrentLocationWeather() = CurrentLocationWeather(
+        location = Location(
+            country = country,
+            lat = lat,
+            lon = lon,
+            name = name,
+            region = region,
+            url = url
+        ),
+        current = Weather(
+            condition = Condition(
+                icon = icon, text = text
+
+            ),
+            feelslikeC = feelslikeC,
+            precipMm = precipMm,
+            uv = uv,
+            windDir = windDir,
+            windKph = windKph
+        ),
+        alerts = null,
+        forecast = null
     )
 }

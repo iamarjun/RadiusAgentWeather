@@ -58,6 +58,7 @@ import com.arjun.core_ui.Dimensions
 import com.arjun.core_ui.LocalSpacing
 import com.arjun.core_ui.theme.RadiusAgentAlabaster
 import com.arjun.core_ui.theme.RadiusAgentGeneralAccent
+import com.arjun.core_ui.theme.RadiusAgentRed
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray
 import com.arjun.core_ui.theme.RadiusAgentSupportingGray3
 import com.arjun.weather.domain.model.Alert
@@ -151,9 +152,9 @@ fun CurrentLocationWeatherDetailScreen(
                             Icon(
                                 imageVector = Icons.Default.DeleteOutline,
                                 contentDescription = "Delete",
-                                tint = Color.Red
+                                tint = RadiusAgentRed
                             )
-                            Text(text = "Remove", color = Color.Red)
+                            Text(text = "Remove", color = RadiusAgentRed)
                         }
                     }
                 }
