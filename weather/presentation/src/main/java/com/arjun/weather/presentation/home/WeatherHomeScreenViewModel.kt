@@ -6,9 +6,8 @@ import com.arjun.weather.domain.location.LocationTracker
 import com.arjun.weather.domain.usecases.GetAllLocation
 import com.arjun.weather.domain.usecases.RemoveLocationFromCache
 import com.arjun.weather.domain.usecases.SearchLocation
-import com.arjun.weather.presentation.detail.CurrentLocationWeatherDetailScreenContract
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +18,7 @@ class WeatherHomeScreenViewModel @Inject constructor(
     private val locationTracker: LocationTracker,
     private val getAllLocation: GetAllLocation,
     private val removeLocationFromCache: RemoveLocationFromCache,
-    ) : BaseViewModel<WeatherHomeScreenContract.Event, WeatherHomeScreenContract.State, WeatherHomeScreenContract.Effect>() {
+) : BaseViewModel<WeatherHomeScreenContract.Event, WeatherHomeScreenContract.State, WeatherHomeScreenContract.Effect>() {
     override fun createInitialState(): WeatherHomeScreenContract.State {
         return WeatherHomeScreenContract.State()
     }
@@ -28,6 +27,7 @@ class WeatherHomeScreenViewModel @Inject constructor(
         when (event) {
             is WeatherHomeScreenContract.Event.OnQueryChange -> {
                 setState { copy(query = event.query) }
+                debounceSearch(event)
             }
 
             WeatherHomeScreenContract.Event.OnSearch -> {
@@ -74,6 +74,15 @@ class WeatherHomeScreenViewModel @Inject constructor(
         }
     }
 
+    private fun debounceSearch(event: WeatherHomeScreenContract.Event.OnQueryChange) {
+        viewModelScope.launch {
+            println("Debounce ${event.query}")
+            delay(300)
+            if (event.query.length > 3)
+                executeSearch()
+        }
+    }
+
     private fun removeFromLocalCache(latLon: String?) {
         viewModelScope.launch {
             latLon?.let {
@@ -91,6 +100,7 @@ class WeatherHomeScreenViewModel @Inject constructor(
             }
         }
     }
+
     private fun getSavedLocation() {
         viewModelScope.launch {
             getAllLocation().collectLatest {
