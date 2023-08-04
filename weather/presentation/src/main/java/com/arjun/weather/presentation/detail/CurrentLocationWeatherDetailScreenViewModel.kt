@@ -46,7 +46,7 @@ class CurrentLocationWeatherDetailScreenViewModel @Inject constructor(
                 removeLocationFromCache(it)
                     .onSuccess {
                         setState {
-                            copy(isSaved = it)
+                            copy(isSaved = !it)
                         }
                     }
                     .onFailure {
