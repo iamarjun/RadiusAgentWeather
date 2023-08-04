@@ -216,7 +216,9 @@ private fun HomeScreen(
                                 modifier = modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        if (locationPermissions.allPermissionsGranted) viewModel.getCurrentLocation()
+                                        if (locationPermissions.allPermissionsGranted) viewModel.setEvent(
+                                            WeatherHomeScreenContract.Event.OnUseCurrentLocation
+                                        )
                                         else locationPermissions.launchMultiplePermissionRequest()
                                     }, headlineContent = {
                                     Text(

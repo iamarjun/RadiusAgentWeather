@@ -51,7 +51,7 @@ class WeatherHomeScreenViewModel @Inject constructor(
             }
 
             WeatherHomeScreenContract.Event.OnUseCurrentLocation -> {
-
+                getCurrentLocation()
             }
 
             WeatherHomeScreenContract.Event.OnClearSearch -> {
@@ -121,6 +121,11 @@ class WeatherHomeScreenViewModel @Inject constructor(
                     currentLocation = currentLocation
                 )
             }
+            setEffect {
+                WeatherHomeScreenContract.Effect.NavigateToCurrentLocationWeatherDetailScreen(
+                    slug = "${currentLocation?.latitude},${currentLocation?.longitude}"
+                )
+            }
         }
     }
 
@@ -133,30 +138,33 @@ class WeatherHomeScreenViewModel @Inject constructor(
             }
 
             currentState.query?.let { query ->
-                searchLocation.invoke(query)
-                    .onSuccess {
-                        println("Location $it")
-                        setState {
-                            copy(
-                                isSearching = false,
-                                searchLocationResult = it
-                            )
-                        }
-                    }
-                    .onFailure {
-                        setState {
-                            copy(
-                                isSearching = false,
-                            )
-                        }
-                        setEffect {
-                            WeatherHomeScreenContract.Effect.ShowToast(
-                                it.localizedMessage ?: "Something went wrong"
-                            )
-                        }
-                    }
-
+                searchCurrentLocation(query)
             }
         }
+    }
+
+    private suspend fun searchCurrentLocation(query: String) {
+        searchLocation.invoke(query)
+            .onSuccess {
+                println("Location $it")
+                setState {
+                    copy(
+                        isSearching = false,
+                        searchLocationResult = it
+                    )
+                }
+            }
+            .onFailure {
+                setState {
+                    copy(
+                        isSearching = false,
+                    )
+                }
+                setEffect {
+                    WeatherHomeScreenContract.Effect.ShowToast(
+                        it.localizedMessage ?: "Something went wrong"
+                    )
+                }
+            }
     }
 }
