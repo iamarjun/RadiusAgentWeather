@@ -2,6 +2,7 @@ package com.arjun.weather.presentation.home
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,6 +81,7 @@ fun WeatherHomeScreen(
     ExperimentalComposeUiApi::class,
     ExperimentalPermissionsApi::class,
     ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class,
 )
 @Composable
 private fun HomeScreen(
@@ -304,7 +306,8 @@ private fun HomeScreen(
                                 ) {
                                     SwipeToDismiss(
                                         modifier = modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth()
+                                            .animateItemPlacement(),
                                         state = dismissState,
                                         background = { SwipeBackground(dismissState = dismissState) },
                                         dismissContent = {
